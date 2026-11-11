@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jazphone – Repair Tickets</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--tx:#151a22;--mu:#657080;--bd:#e1e5eb;--ac:#0b63c5;--on:#fff;--er:#c53030;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101419;--card:#1a2029;--tx:#eef1f5;--mu:#97a3b3;--bd:#2b3441;--ac:#4c9aff;--on:#0a1018;--er:#f56565;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101419;--card:#1a2029;--tx:#eef1f5;--mu:#97a3b3;--bd:#2b3441;--ac:#4c9aff;--on:#0a1018;--er:#f56565;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:20px;margin:0}h1 small{display:block;font-size:12px;font-weight:400;color:var(--mu)}
+button,input,select,textarea{font:inherit;color:inherit}
+.btn{background:var(--ac);color:var(--on);border:0;border-radius:10px;padding:9px 14px;font-weight:600;cursor:pointer}
+.btn.sec{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+.btn.sm{padding:6px 10px;font-size:13px}
+.btn.dng{background:transparent;color:var(--er);border:1px solid var(--er)}
+#stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+#stats div{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
+#stats b{display:block;font-size:22px}#stats span{font-size:12px;color:var(--mu)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.bar input{flex:1 1 200px}
+input,select,textarea{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px 11px;width:100%}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--bd);background:var(--card);border-radius:99px;padding:5px 12px;font-size:13px;cursor:pointer}
+.chip.on{background:var(--ac);color:var(--on);border-color:var(--ac)}
+.tk{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 10px}
+.tk:hover{border-color:var(--ac)}
+.tk .no{font-size:12px;color:var(--mu);font-variant-numeric:tabular-nums}
+.tk .dv{font-weight:600}
+.tk .is{color:var(--mu);font-size:13px;grid-column:1/-1}
+.bd{--c:#657080;display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600;background:color-mix(in srgb,var(--c) 18%,transparent);color:var(--c);white-space:nowrap;align-self:start}
+.empty{text-align:center;color:var(--mu);padding:36px 0}
+.note{background:var(--card);border:1px dashed var(--bd);border-radius:10px;padding:8px 12px;font-size:13px;color:var(--mu);margin-bottom:12px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.ov[hidden]{display:none}
+.sheet{background:var(--bg);width:100%;max-width:640px;max-height:92%;overflow:auto;border-radius:16px 16px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+@media(min-width:700px){.ov{align-items:center}.sheet{border-radius:16px}}
+.sheet h2{margin:0 0 12px;font-size:18px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g .f{grid-column:1/-1}
+label{display:block;font-size:12px;color:var(--mu);margin-bottom:3px}
+.er{color:var(--er);font-size:13px;margin:8px 0 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.kv{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin:10px 0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px}
+.kv span{color:var(--mu)}
+.nt{border-left:3px solid var(--bd);padding:2px 10px;margin:6px 0;font-size:14px}.nt small{color:var(--mu);display:block}
+.x{background:none;border:0;font-size:22px;cursor:pointer;color:var(--mu);line-height:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Jazphone<small>Repair tickets · Marrakech</small></h1>
+    <button class="btn" id="new">+ New ticket</button>
+  </header>
+  <div id="mode"></div>
+  <div id="stats"></div>
+  <div class="bar"><input id="q" type="search" placeholder="Search name, phone, device, IMEI or ticket no."></div>
+  <div class="chips" id="chips" style="margin-bottom:12px"></div>
+  <div id="list"></div>
+</div>
+<div class="ov" id="ov" hidden><div class="sheet" id="sheet"></div></div>
+
+<script>
+const ST=[["received","Received","#657080"],["diagnosing","Diagnosing","#b7791f"],["parts","Waiting for parts","#c05621"],["repairing","Repairing","#2b7bd6"],["ready","Ready for pickup","#2f855a"],["done","Picked up","#4a5568"],["cancelled","Cancelled","#c53030"]];
+const FILTERS=[["open","Open"],["ready","Ready"],["done","Picked up"],["all","All"]];
+const LS="jazphone-tickets-v1";
+let tickets=[],filter="open",query="",col=null,local=false,armDel=false;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const mad=n=>(Number(n)||0).toLocaleString("en-US")+" MAD";
+const stOf=k=>ST.find(s=>s[0]===k)||ST[0];
+const isOpen=t=>t.status!=="done"&&t.status!=="cancelled";
+const code=t=>"JZ-"+String(t.no).padStart(4,"0");
+const ago=ts=>{const m=Math.floor((Date.now()-ts)/6e4);if(m<1)return"just now";if(m<60)return m+" min ago";const h=Math.floor(m/60);return h<24?h+" h ago":Math.floor(h/24)+" d ago"};
+const badge=k=>{const s=stOf(k);return `<span class="bd" style="--c:${s[2]}">${s[1]}</span>`};
+
+/* ---------- storage: shared db when available, else this device ---------- */
+function loadLocal(){local=true;try{tickets=JSON.parse(localStorage.getItem(LS)||"[]")}catch(e){tickets=[]}
+  $("#mode").innerHTML='<div class="note">Tickets are saved on this device only. Open the page signed in to claude.ai to share them with your team.</div>';render()}
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(tickets))}catch(e){}}
+async function init(){
+  render();
+  try{
+    const db=window.claude&&await window.claude.use("db");
+    if(db){
+      col=db.collection("tickets");
+      const timer=setTimeout(loadLocal,10000);
+      col.onSnapshot(s=>{clearTimeout(timer);tickets=s.docs.map(d=>Object.assign({id:d.id},d.data()));render()},()=>{clearTimeout(timer);col=null;loadLocal()});
+      return;
+    }
+  }catch(e){}
+  loadLocal();
+}
+async function put(t){
+  const i=tickets.findIndex(x=>x.id===t.id);
+  if(i<0)tickets.push(t);else tickets[i]=t;
+  if(col){try{await col.doc(t.id).set(t)}catch(e){$("#mode").innerHTML='<div class="note">Couldn’t save to the shared database. Check your permissions.</div>'}}
+  else saveLocal();
+  render();
+}
+async function del(t){
+  tickets=tickets.filter(x=>x.id!==t.id);
+  if(col){try{await col.doc(t.id).delete()}catch(e){}}else saveLocal();
+  render();
+}
+
+/* ---------- list ---------- */
+function render(){
+  $("#stats").innerHTML=`<div><b>${tickets.filter(isOpen).length}</b><span>Open</span></div><div><b>${tickets.filter(t=>t.status==="ready").length}</b><span>Ready for pickup</span></div><div><b>${tickets.length}</b><span>All time</span></div>`;
+  $("#chips").innerHTML=FILTERS.map(f=>`<button class="chip ${f[0]===filter?"on":""}" data-f="${f[0]}">${f[1]}</button>`).join("");
+  const q=query.trim().toLowerCase();
+  const rows=tickets.filter(t=>filter==="all"||(filter==="open"?isOpen(t):filter==="done"?(t.status==="done"||t.status==="cancelled"):t.status===filter))
+    .filter(t=>!q||[t.name,t.phone,t.brand,t.model,t.imei,code(t)].join(" ").toLowerCase().includes(q))
+    .sort((a,b)=>b.updated-a.updated);
+  $("#list").innerHTML=rows.length?rows.map(t=>`<div class="tk" data-id="${esc(t.id)}"><div><span class="no">${code(t)} · ${ago(t.updated)}</span><div class="dv">${esc(t.brand)} ${esc(t.model)}</div></div>${badge(t.status)}<div class="is">${esc(t.name)} · ${esc(t.phone)} — ${esc(t.issue)}</div></div>`).join(""):`<div class="empty">${tickets.length?"No tickets match.":"No tickets yet. Tap “New ticket” to log the first repair."}</div>`;
+}
+$("#chips").onclick=e=>{const f=e.target.dataset.f;if(f){filter=f;render()}};
+$("#q").oninput=e=>{query=e.target.value;render()};
+$("#list").onclick=e=>{const c=e.target.closest(".tk");if(c)detail(c.dataset.id)};
+$("#new").onclick=()=>form();
+
+/* ---------- sheet ---------- */
+function open(html){$("#sheet").innerHTML=html;$("#ov").hidden=false}
+function close(){$("#ov").hidden=true;armDel=false}
+$("#ov").onclick=e=>{if(e.target.id==="ov")close()};
+
+function form(t){
+  const v=t||{};
+  open(`<h2>${t?"Edit "+code(t):"New repair ticket"}<button class="x" id="cl">×</button></h2>
+  <div class="g">
+    <div><label>Customer name *</label><input id="f-name" value="${esc(v.name)}"></div>
+    <div><label>Phone / WhatsApp *</label><input id="f-phone" type="tel" value="${esc(v.phone)}" placeholder="06 12 34 56 78"></div>
+    <div><label>Brand *</label><input id="f-brand" value="${esc(v.brand)}" placeholder="Samsung, iPhone…"></div>
+    <div><label>Model</label><input id="f-model" value="${esc(v.model)}"></div>
+    <div class="f"><label>IMEI / serial</label><input id="f-imei" value="${esc(v.imei)}"></div>
+    <div class="f"><label>Problem *</label><textarea id="f-issue" rows="2">${esc(v.issue)}</textarea></div>
+    <div class="f"><label>Condition & items left (case, SIM, scratches…)</label><input id="f-cond" value="${esc(v.cond)}"></div>
+    <div><label>Estimate (MAD)</label><input id="f-price" type="number" min="0" value="${esc(v.price)}"></div>
+    <div><label>Deposit paid (MAD)</label><input id="f-dep" type="number" min="0" value="${esc(v.deposit)}"></div>
+  </div>
+  <p class="er" id="err"></p>
+  <div class="row"><button class="btn" id="sv">${t?"Save changes":"Create ticket"}</button><button class="btn sec" id="cl2">Cancel</button></div>`);
+  $("#cl").onclick=$("#cl2").onclick=()=>t?detail(t.id):close();
+  $("#sv").onclick=async()=>{
+    const g=k=>$("#f-"+k).value.trim();
+    if(!g("name")||!g("phone")||!g("brand")||!g("issue")){$("#err").textContent="Name, phone, brand and problem are required.";return}
+    const now=Date.now();
+    const nt=Object.assign({},t||{id:"t"+now.toString(36)+Math.random().toString(36).slice(2,5),no:Math.max(0,...tickets.map(x=>x.no||0))+1,created:now,status:"received",notes:[]},
+      {name:g("name"),phone:g("phone"),brand:g("brand"),model:g("model"),imei:g("imei"),issue:g("issue"),cond:g("cond"),price:Number(g("price"))||0,deposit:Number(g("dep"))||0,updated:now});
+    await put(nt);detail(nt.id);
+  };
+}
+
+function waLink(t){
+  let d=t.phone.replace(/\D/g,"");if(d.startsWith("00"))d=d.slice(2);else if(d.startsWith("0"))d="212"+d.slice(1);
+  const due=Math.max(0,t.price-t.deposit);
+  const msg={ready:`Hello ${t.name}, your ${t.brand} ${t.model} (ticket ${code(t)}) is ready for pickup at Jazphone.${t.price?" Balance due: "+mad(due)+".":""} Thank you!`,
+    parts:`Hello ${t.name}, we’re waiting for a part for your ${t.brand} ${t.model} (ticket ${code(t)}). We’ll message you as soon as it arrives.`,
+    done:`Thank you ${t.name} for choosing Jazphone! Ticket ${code(t)} is closed.`}[t.status]||`Hello ${t.name}, an update on your ${t.brand} ${t.model} (ticket ${code(t)}): ${stOf(t.status)[1].toLowerCase()}.`;
+  return `https://wa.me/${d}?text=${encodeURIComponent(msg)}`;
+}
+
+function detail(id){
+  const t=tickets.find(x=>x.id===id);if(!t){close();return}
+  const due=Math.max(0,t.price-t.deposit);
+  open(`<h2><span>${code(t)} ${badge(t.status)}</span><button class="x" id="cl">×</button></h2>
+  <label>Move to status</label>
+  <div class="chips">${ST.map(s=>`<button class="chip ${s[0]===t.status?"on":""}" data-s="${s[0]}">${s[1]}</button>`).join("")}</div>
+  <div class="kv">
+    <span>Customer</span><b>${esc(t.name)}</b>
+    <span>Phone</span><b>${esc(t.phone)}</b>
+    <span>Device</span><b>${esc(t.brand)} ${esc(t.model)}</b>
+    ${t.imei?`<span>IMEI</span><b>${esc(t.imei)}</b>`:""}
+    <span>Problem</span><b>${esc(t.issue)}</b>
+    ${t.cond?`<span>Condition</span><b>${esc(t.cond)}</b>`:""}
+    <span>Estimate</span><b>${mad(t.price)}</b>
+    <span>Deposit</span><b>${mad(t.deposit)}</b>
+    <span>Balance due</span><b>${mad(due)}</b>
+    <span>Received</span><b>${new Date(t.created).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}</b>
+  </div>
+  <label>Repair log</label>
+  ${(t.notes||[]).map(n=>`<div class="nt"><small>${ago(n.t)}</small>${esc(n.x)}</div>`).join("")||'<div class="nt"><small>No notes yet</small></div>'}
+  <div class="row" style="margin-top:6px"><input id="nn" placeholder="Add a note (parts used, test results…)" style="flex:1"><button class="btn sm" id="na">Add</button></div>
+  <div class="row"><a class="btn sec" style="text-decoration:none" target="_blank" rel="noopener" href="${waLink(t)}">Message on WhatsApp</a><button class="btn sec" id="ed">Edit</button><button class="btn dng" id="dl">${armDel?"Tap again to delete":"Delete"}</button></div>`);
+  $("#cl").onclick=close;
+  $("#sheet").querySelectorAll("[data-s]").forEach(b=>b.onclick=async()=>{
+    const s=b.dataset.s,n=Object.assign({},t,{status:s,updated:Date.now(),notes:(t.notes||[]).concat([{t:Date.now(),x:"Status → "+stOf(s)[1]}])});
+    await put(n);detail(id)});
+  const add=async()=>{const x=$("#nn").value.trim();if(!x)return;await put(Object.assign({},t,{updated:Date.now(),notes:(t.notes||[]).concat([{t:Date.now(),x}])}));detail(id)};
+  $("#na").onclick=add;$("#nn").onkeydown=e=>{if(e.key==="Enter")add()};
+  $("#ed").onclick=()=>form(t);
+  $("#dl").onclick=async()=>{if(!armDel){armDel=true;detail(id);return}armDel=false;await del(t);close()};
+}
+init();
+</script>
+</body>
+</html>
